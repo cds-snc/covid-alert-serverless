@@ -46,7 +46,7 @@ describe('handler', () => {
             }
         };
         const actualValue = await handler(mEvent);
-        expect(actualValue).toEqual({ statusCode: 400, body: JSON.stringify({ message: mResponse.message }) });
+        expect(actualValue).toEqual( mResponse );
     });
 
 });
