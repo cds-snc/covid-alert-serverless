@@ -9,7 +9,6 @@ exports.handler = async (event, context) => {
 
     const bucket = process.env.dataBucket;
     const filePath = process.env.fileLoca;
-    const kmsKey = process.env.dataKey;
     const filename = uuid.v1();
     let transactionStatus = "FAILED";
     var body = JSON.stringify(event);
@@ -18,8 +17,7 @@ exports.handler = async (event, context) => {
         Bucket: bucket + "/" + filePath,
         Key: filename + '.json',
         Body: body,
-        ServerSideEncryption: 'aws:kms',
-        SSEKMSKeyId: kmsKey
+        ServerSideEncryption: 'AES256'
     };
 
     /* The puObject call forces a promise because the result returned may not be a promise.  */
