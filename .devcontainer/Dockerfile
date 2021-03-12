@@ -4,8 +4,30 @@
 ARG VARIANT="14-buster"
 FROM mcr.microsoft.com/vscode/devcontainers/javascript-node:0-${VARIANT}
 
+WORKDIR /workspace
+
+COPY awscli.pubkey ./
+
 # [Optional] Uncomment this section to install additional OS packages.
-RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && unzip awscliv2.zip && sudo ./aws/install && rm awscliv2.zip
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
+  gpg --import awscli.pubkey && \
+  curl -o awscliv2.sig https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip.sig && \
+  gpg --verify awscliv2.sig awscliv2.zip && \
+  unzip awscliv2.zip && \
+  sudo ./aws/install && \
+  rm awscliv2.zip && \
+  rm -rf ./aws
+
+# Download SAM from the Github check te 
+RUN curl -OL "https://github.com/aws/aws-sam-cli/releases/download/v1.20.0/aws-sam-cli-linux-x86_64.zip" && \
+  echo f6c5f1ca9ec342506ca0af5c42ee87f1f90d6f1af2e1788050acee75426cca1d aws-sam-cli-linux-x86_64.zip > sha.txt && \
+  sha256sum -c sha.txt && \
+  unzip aws-sam-cli-linux-x86_64.zip -d sam-installation && \
+  sudo ./sam-installation/install && \ 
+  rm -rf sam-installation && \
+  rm aws-sam-cli-linux-x86_64.zip && \
+  rm sha.txt
+
 # RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
 #    && apt-get -y install --no-install-recommends python3.6
 
