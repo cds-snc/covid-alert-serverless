@@ -1,0 +1,19 @@
+Transform: AWS::Serverless-2016-10-31
+Resources:
+  ApiGatewayApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Description: "Store Raw Metrics"
+      Name: "create_metric"
+      StageName: "local"
+  ApiFunction: # Adds a GET api endpoint at "/" to the ApiGatewayApi via an Api event
+    Type: AWS::Serverless::Function
+    Properties:
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /
+            Method: post
+            RestApiId:
+              Ref: ApiGatewayApi

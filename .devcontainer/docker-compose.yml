@@ -3,20 +3,32 @@ version: '3'
 services:
   app:
     build: 
-      context: ..
-      dockerfile: .devcontainer/Dockerfile
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # On Linux, you may need to update USER_UID and USER_GID below if not your local UID is not 1000.
+        USER_UID: 1000
+        USER_GID: 1000
+
+    init: true
     volumes:
-      - ..:/workspace:cached   
-    command: sleep infinity
+      # Forwards the local Docker socket to the container.
+      - /var/run/docker.sock:/var/run/docker-host.sock 
+      # Update this to wherever you want VS Code to mount the folder of your project
+      - ..:/workspace:cached
     depends_on: 
-      - dynamodb-local
+      - dynamodb-raw-metrics
     links: 
-      - dynamodb-local
+      - dynamodb-raw-metrics
     environment: 
       AWS_ACCESS_KEY_ID: 'DUMMYIDEXAMPLE'
       AWS_SECRET_ACCESS_KEY: 'DUMMYEXAMPLEKEY'
 
-  dynamodb-local:
+    # Overrides default command so things don't shut down after the process ends.
+    entrypoint: /usr/local/share/docker-init.sh
+    command: sleep infinity 
+
+  dynamodb-raw-metrics:
     command: "-jar DynamoDBLocal.jar -sharedDb -optimizeDbBeforeStartup -dbPath ./data"
     image: "amazon/dynamodb-local:latest"
     container_name: dynamodb-local
@@ -25,3 +37,14 @@ services:
     volumes:
       - "./docker/dynamodb:/home/dynamodblocal/data"
     working_dir: /home/dynamodblocal
+    # Uncomment the next four lines if you will use a ptrace-based debuggers like C++, Go, and Rust.
+    # cap_add:
+    #  - SYS_PTRACE
+    # security_opt:
+    #   - seccomp:unconfined
+
+    # Uncomment the next line to use a non-root user for all processes.
+    # user: vscode
+
+    # Use "forwardPorts" in **devcontainer.json** to forward an app port locally. 
+    # (Adding the "ports" property to this file will not forward from a Codespace.)
