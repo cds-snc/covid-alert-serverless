@@ -1,0 +1,49 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: An AWS Serverless Specification template describing your function.
+Resources:
+  aggregatemetrics:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: aggregate_values.handler
+      Runtime: nodejs12.x
+      CodeUri: .
+      Description: ''
+      MemorySize: 128
+      Timeout: 60
+      Role: 'arn:aws:iam::820252213580:role/aggregate_lambda_role'
+      Events:
+        DynamoDB1:
+          Type: DynamoDB
+          Properties:
+            Stream:
+              'Fn::GetAtt':
+                - Table1
+                - StreamArn
+            StartingPosition: LATEST
+            BatchSize: 100
+      VpcConfig:
+        SecurityGroupIds:
+          - sg-01ae50474a68cf78e
+        SubnetIds:
+          - subnet-02084f2042358f35f
+          - subnet-09f828dbbd0b61f67
+          - subnet-06f34f260becf8bf5
+      Environment:
+        Variables:
+          DEAD_LETTER_QUEUE_URL: >-
+            https://sqs.ca-central-1.amazonaws.com/820252213580/aggregation-lambda-dead-letter-queue
+  Table1:
+    Type: 'AWS::DynamoDB::Table'
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      StreamSpecification:
+        StreamViewType: NEW_IMAGE

@@ -1,0 +1,23 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: Lambda function for collecting metrics records
+
+Resources:
+  Savemetrics:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: create_metric.handler
+      Runtime: nodejs12.x
+      CodeUri: ./
+      Description: Lambda function for collecting metrics records
+      MemorySize: 128
+      Timeout: 3
+      Events:
+        Api1:
+          Type: Api
+          Properties:
+            Path: /save_metrics
+            Method: POST
+      Environment:
+        Variables:
+          TABLE_NAME: raw_metrics

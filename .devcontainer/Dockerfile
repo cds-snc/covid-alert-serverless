@@ -23,11 +23,6 @@ RUN apt-get update \
     # Clean up
     && apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/* /tmp/library-scripts/
 
-# Setting the ENTRYPOINT to docker-init.sh will configure non-root access 
-# to the Docker socket. The script will also execute CMD as needed.
-ENTRYPOINT [ "/usr/local/share/docker-init.sh" ]
-CMD [ "sleep", "infinity" ]
-
 WORKDIR /workspace
 
 COPY awscli.pubkey ./
@@ -41,18 +36,12 @@ RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2
   && sudo ./aws/install \
   && rm awscliv2.zip \
   && rm -rf ./aws
+# Setting the ENTRYPOINT to docker-init.sh will configure non-root access 
+# to the Docker socket. The script will also execute CMD as needed.
+ENTRYPOINT [ "/usr/local/share/docker-init.sh" ]
+CMD [ "sleep", "infinity" ]
 
-# Download SAM from the Github check te 
-RUN curl -OL "https://github.com/aws/aws-sam-cli/releases/download/v1.20.0/aws-sam-cli-linux-x86_64.zip" \
-  && echo f6c5f1ca9ec342506ca0af5c42ee87f1f90d6f1af2e1788050acee75426cca1d aws-sam-cli-linux-x86_64.zip > sha.txt \
-  && sha256sum -c sha.txt \
-  && unzip aws-sam-cli-linux-x86_64.zip -d sam-installation \
-  && sudo ./sam-installation/install \ 
-  && rm -rf sam-installation \
-  && rm aws-sam-cli-linux-x86_64.zip \
-  && rm sha.txt
 
-ENV SAM_CLI_TELEMETRY=0
 # [Optional] Uncomment this section to install additional OS packages.
 # RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
 #     && apt-get -y install --no-install-recommends <your-package-list-here>

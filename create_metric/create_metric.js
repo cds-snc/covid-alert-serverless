@@ -11,9 +11,10 @@ const uuidv4 = () => {
     );
 }
 
+console.log("Starting up!")
 
 exports.handler = async (event, context) => {
-
+    console.log(JSON.stringify(event))
     const transactionStatus = {
         isBase64Encoded:  false
     };
@@ -49,3 +50,17 @@ exports.handler = async (event, context) => {
 
     return transactionStatus;
 };
+
+
+// A simple hello world Lambda function
+// exports.handler = (event, context, callback) => {
+
+//     console.log('LOG: Received an event' );
+
+//     callback(null, {
+//         isBase64Encoded: false,
+//         statusCode: 200,
+//         body: "Hello, World!"
+//     })
+
+// }
