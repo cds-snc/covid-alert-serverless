@@ -2,16 +2,24 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: 'AWS::Serverless-2016-10-31'
 Description: Lambda function for collecting metrics records
 
+Globals:
+  Function:
+    Environment:
+      Variables:
+        AWS_ACCESS_KEY_ID: 'DUMMYIDEXAMPLE'
+        AWS_SECRET_ACCESS_KEY: 'DUMMYEXAMPLEKEY'
+        LOCAL: true
+
 Resources:
   Savemetrics:
     Type: 'AWS::Serverless::Function'
     Properties:
       Handler: create_metric.handler
       Runtime: nodejs12.x
-      CodeUri: ./
+      CodeUri: ./create_metric
       Description: Lambda function for collecting metrics records
       MemorySize: 128
-      Timeout: 3
+      Timeout: 30
       Events:
         Api1:
           Type: Api

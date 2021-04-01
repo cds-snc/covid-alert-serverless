@@ -4,12 +4,20 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "lint": "eslint 'create_metric/create_metric.js' 'backoff_retry/backoff_retry.js' 'aggregate_metrics/aggregate_values.js'"
   },
   "author": "",
   "license": "MIT",
   "devDependencies": {
     "aws-sdk": "^2.858.0",
+    "eslint": "^7.23.0",
+    "eslint-config-prettier": "^8.1.0",
+    "eslint-config-standard": "^16.0.2",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.3.1",
+    "eslint-plugin-security": "^1.4.0",
     "jest": "^26.6.3"
   }
 }
